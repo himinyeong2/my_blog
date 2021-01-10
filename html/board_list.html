@@ -1,0 +1,31 @@
+<style>
+    select{
+        width:100%!important;
+    }
+</style>
+<div class="container">
+    <div class="row mb-5">
+        <div class="col-sm-3">
+            <h3 class="mb-0 mt-2" style="font-size: 25px;"><?php echo $title ?> </h3>
+        </div>
+        <form action="board.php?mode=list" name="search_form" class="form-inline col-sm-9 mb-0" method="get">
+            <input hidden type="text" value="list" name="mode" >
+            <input hidden type="text" value="<?php echo $category ?>" name="category_number" >
+            <div class="col-sm-3"> <?php echo $category_box ?> </div>
+            <div class="col-sm-3"> <?php echo $select_box ?> </div>
+            <div class="col-sm-4"><input class="form-control" type="text" placeholder="Search" name="search_keyword" value="<?php echo $_GET['search_keyword'] ?>"></div>
+            <div class="col-sm-2"> <a class="btn full_btn" onclick="document.search_form.submit()">Search</a></div>
+        </form>
+    </div>
+    <div class="row mb-4">
+       <?php echo $board_list; ?>
+
+    </div>
+    <div class="row d-flex ">
+        <div class="mx-auto">
+            <?php echo $paging ?>
+           
+            </ul>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,130 @@
+
+<div class="container" >
+    <div class="row">
+        <div class="col-sm-12">
+            <form action="?mode=reg&number=<?php echo $number ?>" method="post" name="study_form" enctype="multipart/form-data" >
+                <input hidden type="text" name="number" value="<?php echo $number ?>">
+                <div id="modal" class="modal">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <p>Select Category!</p>
+                                <?php echo $category_box; ?>
+                            </div>
+                            <div class="modal-footer">
+                                <a onclick="$('form[name=study_form]').submit()" type="button" class="btn">SAVE</a>
+                                <a type="button" id="close_btn" class="btn unfiiled_btn" data-dismiss="modal">CLOSE</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card border-light mb-3">
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <fieldset>
+                                        <label class="control-label" for="readOnlyInput">제목</label>
+                                        <input class="form-control" name="title" id="readOnlyInput" type="text"
+                                            placeholder="제목을 입력하세요" value="<?php echo $title ?>">
+                                    </fieldset>
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <fieldset>
+                                        <label class="control-label" for="readOnlyInput">짧은 설명</label>
+                                        <input class="form-control" name="sub_title" id="readOnlyInput" type="text"
+                                            placeholder="짧은 설명을 입력하세요" value="<?php echo $sub_title ?>">
+                                    </fieldset>
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="content">내용</label>
+                                    <textarea id="mytextarea" name="contents">
+                                        <?php echo $contents ?>
+                                  </textarea>
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="content">해시태그</label>
+                                    <input class="form-control" name="tag" type="text" placeholder="문자만 입력해주세요"
+                                        style="width:200px; display: inline-block; vertical-align: middle;">
+                                    <a id="add_btn" class="btn">add</a>
+                                    <span id="hashtag"><?php echo $hashtag ?></span>
+                                    <input name="hashtag" type="text" value="<?php echo $tag ?>" hidden>
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="content">메인이미지</label>
+                                    <fieldset>
+                                        <input type="file" name="main_image">
+                                        <!-- <div class="custom-file">
+                                            <input type="file" name="main_image" class="custom-file-input" id="inputGroupFile02">
+                                            <label class="custom-file-label" for="inputGroupFile02">Choose file</label>
+                                          </div> -->
+                                    </fieldset>
+                                </div>
+                                <?php echo $main_image ?>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <div align="center" class="col-md-12">
+                                        <a id="insert_btn" class="btn full_btn">INSERT</a>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    tinymce.init({
+        selector: 'textarea',
+        toolbar_mode: 'floating',
+        tinycomments_mode: 'embedded',
+        tinycomments_author: 'Author name',
+    });
+</script>
+<script>
+    document.getElementsByName('category')[0].addEventListener('change',function(){
+        $.ajax({
+            url:'category.php?category='+this.value,
+            success:function(data){
+                // alert(data);
+                if(document.getElementsByName('sub_category').length==1){
+                    document.getElementsByName('sub_category')[0].remove();
+                    $('.modal-body').append(data);
+                }
+                else
+                    $('.modal-body').append(data);
+            }
+        })
+    });
+    document.getElementById('insert_btn').addEventListener('click', function () {
+        document.getElementById('modal').style.display = "block";
+    });
+    document.getElementById('close_btn').addEventListener('click', function () {
+        document.getElementById('modal').style.display = "none";
+    });
+    document.getElementById('add_btn').addEventListener('click', function () {
+        var value = $('input[name=tag]').val();
+        if(!check(value)) return;
+        $('#hashtag').append("#" + value + "&nbsp;");
+        if( $('input[name=hashtag]').val() == ""){
+            $('input[name=hashtag]').val($('input[name=tag]').val());
+        }else{
+            $('input[name=hashtag]').val($('input[name=hashtag]').val()+ ","+ $('input[name=tag]').val());
+        }
+        
+        $('input[name=tag]').val("");
+    });
+
+    
+</script>
