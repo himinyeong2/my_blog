@@ -61,6 +61,10 @@ function board_mod(number){
       }
   });
 }
+function wait(){
+    alert("준비중입니다!");
+    return;
+}
 function board_del(number) {
   var password = prompt("관리자 암호를 입력하세용~!!");
   $.ajax({
@@ -79,3 +83,39 @@ function board_del(number) {
   });
   
 }
+
+jQuery(function ($) {
+
+    $(".sidebar-dropdown > a").click(function() {
+    $(".sidebar-submenu").slideUp(200);
+    if (
+    $(this)
+      .parent()
+      .hasClass("active")
+    ) {
+    $(".sidebar-dropdown").removeClass("active");
+    $(this)
+      .parent()
+      .removeClass("active");
+    } else {
+    $(".sidebar-dropdown").removeClass("active");
+    $(this)
+      .next(".sidebar-submenu")
+      .slideDown(200);
+    $(this)
+      .parent()
+      .addClass("active");
+    }
+    });
+    
+    $("#close-sidebar").click(function() {
+    $(".page-wrapper").removeClass("toggled");
+    });
+    $("#show-sidebar").click(function() {
+    $(".page-wrapper").addClass("toggled");
+    });
+    
+    
+    
+    
+    });

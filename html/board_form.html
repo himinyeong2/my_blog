@@ -7,13 +7,13 @@
                 <div id="modal" class="modal">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
-                            <div class="modal-body">
+                            <div id="modal_body" class="modal-body">
                                 <p>Select Category!</p>
                                 <?php echo $category_box; ?>
                             </div>
                             <div class="modal-footer">
-                                <a onclick="$('form[name=study_form]').submit()" type="button" class="btn">SAVE</a>
-                                <a type="button" id="close_btn" class="btn unfiiled_btn" data-dismiss="modal">CLOSE</a>
+                                <button type="button" onclick="$('form[name=study_form]').submit()" class="btn btn-primary">SAVE</button>
+                                <button type="button" id="close_btn" class="btn btn-outline-primary" data-dismiss="modal">CLOSE</button>
                             </div>
                         </div>
                     </div>
@@ -42,9 +42,8 @@
                             <li class="list-group-item">
                                 <div class="form-group">
                                     <label for="content">내용</label>
-                                    <textarea id="mytextarea" name="contents">
-                                        <?php echo $contents ?>
-                                  </textarea>
+                                     <textarea id="summernote" name="contents">
+                                        <?php echo $contents ?></textarea>
                                 </div>
                             </li>
                             <li class="list-group-item">
@@ -52,7 +51,7 @@
                                     <label for="content">해시태그</label>
                                     <input class="form-control" name="tag" type="text" placeholder="문자만 입력해주세요"
                                         style="width:200px; display: inline-block; vertical-align: middle;">
-                                    <a id="add_btn" class="btn">add</a>
+                                    <button id="add_btn" class="btn btn-primary" type="button">add</button>
                                     <span id="hashtag"><?php echo $hashtag ?></span>
                                     <input name="hashtag" type="text" value="<?php echo $tag ?>" hidden>
                                 </div>
@@ -73,7 +72,7 @@
                             <li class="list-group-item">
                                 <div class="row">
                                     <div align="center" class="col-md-12">
-                                        <a id="insert_btn" class="btn full_btn">INSERT</a>
+                                        <button id="insert_btn" type="button" class="btn btn-primary full_btn" style="height: 45px;">INSERT</button>
                                     </div>
                                 </div>
                             </li>
@@ -85,11 +84,25 @@
     </div>
 </div>
 <script>
-    tinymce.init({
-        selector: 'textarea',
-        toolbar_mode: 'floating',
-        tinycomments_mode: 'embedded',
-        tinycomments_author: 'Author name',
+   $('#summernote').summernote({
+      placeholder: '내용을 입력해주세요',
+      tabsize: 2,
+      height: 500,
+      toolbar: [
+    // [groupName, [list of button]]
+    ['style', ['bold', 'italic', 'underline', 'clear']],
+    ['fontsize', ['fontsize']],
+    ['color', ['color']],
+    ['para', ['ul', 'ol', 'paragraph']],
+    ['height', ['height']]
+  ],
+  blockquoteBreakingLevel: 2,
+  styleTags: [
+    'p',
+        { title: 'Blockquote', tag: 'blockquote', className: 'blockquote', value: 'blockquote' },
+        'pre', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'
+	]
+  
     });
 </script>
 <script>
@@ -100,10 +113,10 @@
                 // alert(data);
                 if(document.getElementsByName('sub_category').length==1){
                     document.getElementsByName('sub_category')[0].remove();
-                    $('.modal-body').append(data);
+                    $('#modal_body').append(data);
                 }
                 else
-                    $('.modal-body').append(data);
+                    $('#modal_body').append(data);
             }
         })
     });
@@ -116,7 +129,7 @@
     document.getElementById('add_btn').addEventListener('click', function () {
         var value = $('input[name=tag]').val();
         if(!check(value)) return;
-        $('#hashtag').append("#" + value + "&nbsp;");
+        $('#hashtag').append('<span class="badge badge-pill badge-light">'+value+'</span>');
         if( $('input[name=hashtag]').val() == ""){
             $('input[name=hashtag]').val($('input[name=tag]').val());
         }else{

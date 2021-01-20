@@ -20,12 +20,15 @@ if ($mode == "list") {
     } else if ($category == "3") {
         $title = "ALGORITHM";
         $category_box = get_category(3,$sub_category);
-        $board_list = algorithm_list(null);
+        $board_list = board_list(null,$category);
 
     } else if ($category == "2") {
         $title = "STUDY";
         $category_box = get_category(2,$sub_category);
-        $board_list = study_list(null);
+        $board_list = board_list(null,$category);
+    } else if($category=="9"){
+        $title = "FREE BOARD";
+        $board_list = board_list(null,$category);
     }
     include 'html/board_list.html';
 
@@ -62,8 +65,12 @@ if ($mode == "list") {
 
         $tag= $result[0]['tag'];
         $tag_array=explode(",",$tag);
-        for($i=0;$i<sizeof($tag_array);$i++){
-            $hashtag.="#".$tag_array[$i]."&nbsp;";
+        
+        if($result[0]['tag']!=''){
+            for($i=0;$i<sizeof($tag_array);$i++){
+                $hashtag .= '<span class="badge badge-pill badge-light">'.$tag_array[$i].'</span>';
+                // $hashtag.="#".$tag_array[$i]." ";
+            }
         }
         
     
@@ -171,7 +178,7 @@ else if ($mode == "reg") {
 else if($mode == "show" && $number!=''){
 
     if($number!=''){
-        $stmt = $conn->prepare("SELECT b.number,b.title, b.sub_title, b.tag, b.reg_date, c.value, b.main_image FROM me_blog_board b INNER JOIN me_blog_category c ON b.category = c.number WHERE b.number = :number");
+        $stmt = $conn->prepare("SELECT b.number,b.contents, b.title, b.sub_title, b.tag, b.reg_date, c.value, b.main_image FROM me_blog_board b INNER JOIN me_blog_category c ON b.category = c.number WHERE b.number = :number");
         $stmt->bindParam(':number',$number);
         $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -180,15 +187,18 @@ else if($mode == "show" && $number!=''){
         $title = $result[0]['title'];
         $sub_title = $result[0]['sub_title'];
         $tag_array= explode("," ,$result[0]['tag']);
+        $contents= $result[0]['contents'];
         $date= explode(" ",$result[0]['reg_date']);
         $category= $result[0]['value'];
         $main_image= ($result[0]['main_image']=="")? "assets/image/no_image.jpg" : $result[0]['main_image'];
         $comments_list = comments_list($number);
-        
-        for($i=0;$i<sizeof($tag_array);$i++){
-            $tag.="#".$tag_array[$i]." ";
+
+        if($result[0]['tag']!=''){
+            for($i=0;$i<sizeof($tag_array);$i++){
+                $tag.='<span class="badge badge-primary">'.$tag_array[$i].'</span> ';
+                // $tag.="#".$tag_array[$i]." ";
+            }
         }
-    
     }
     include 'html/board_detail.html';
 }

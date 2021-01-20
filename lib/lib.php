@@ -11,11 +11,13 @@ function project_list($html)
     $keyword = $_GET['search_keyword'];
     $WHERE = "WHERE category =1  ";
     $WHERE = ($field != '') ? $WHERE .= " AND " . $field . "  LIKE '%$keyword%'" : $WHERE;
+    
 
     if ($html == "index") {
         $sql = "SELECT * FROM me_blog_board $WHERE order by reg_date desc LIMIT 0,4";
     } else {
-        $sql = "SELECT * FROM me_blog_board $WHERE   order by reg_date";
+        $sql = "SELECT * FROM me_blog_board $WHERE   order by reg_date desc";
+        $padding = "pl-0 pr-4";
     }
 
     $stmt = $conn->prepare($sql);
@@ -36,7 +38,7 @@ function project_list($html)
             }
 
             $content .= '
-            <div align="center" class="col-sm-3">
+            <div align="center" class="col-sm-3 '.$padding.'">
                     <div class="card border-dark mb-3" style="max-width: 20rem;">
                         <div class="card-header">
                             <img class="cursor_pointer" onclick="location.href=\'board.php?mode=show&number=' . $data['number'] . '\'" src="' . $data['main_image'] . '">
@@ -61,6 +63,129 @@ function project_list($html)
     </div>
         ';
     return $RETURN;
+}
+function board_list($html, $category){
+    global $conn,$paging;
+    if ($html == "index") {
+
+        $stmt = $conn->prepare("SELECT b.number, b.title, c.name, b.reg_date FROM me_blog_board b  LEFT OUTER JOIN  me_blog_category c ON b.sub_category = c.number WHERE category = $category order by b.reg_date desc LIMIT 0,5");
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (sizeof($result) == 0) {
+            $content = ' <td colspan=4 class="text-center" scope="row">등록된 게시글이 없습니다.</td> ';
+
+        } else {
+            $count = $stmt->rowCount();
+            foreach ($result as $data) {
+                $hashtag = explode(",", $data['tag']);
+                $hash_tag = '';
+                if ($data['tag'] != '') {
+                    foreach ($hashtag as $tag) {
+                        $hash_tag .= ' <span>#' . $tag . '</span>';
+                    }
+                }
+
+                $content .= '
+                <tr  class="table-active cursor_pointer"  onclick="location.href=\'board.php?mode=show&number=' . $data['number'] . '\'">
+                    <td class="text-center">' . $count-- . '</td>
+                    <td class="text-center">' . $data['title'] . '</td>
+                    <td class="text-center">' . $data['name'] . '</td>
+                  </tr>
+                ';
+            }
+        }
+
+        $RETURN = '
+            <table class="table table-hover">
+            <tbody>
+            ' . $content . '
+            </tbody>
+        </table>
+            ';
+
+    } else {
+
+        $sub_category = $_GET['sub_category'];
+        $field = $_GET['field'];
+        $keyword = $_GET['search_keyword'];
+        $WHERE = "WHERE category = $category ";
+        $WHERE = ($sub_category != '') ? $WHERE .= " AND sub_category = " . $sub_category : $WHERE;
+        $WHERE = ($field != '') ? $WHERE .= " AND " . $field . "  LIKE '%$keyword%'" : $WHERE;
+
+
+        /* paging */
+        $sql1 =  $conn->prepare("SELECT number FROM me_blog_board " . $WHERE . " order by number desc");
+        $sql1->execute();
+        $row_num = $sql1->rowCount();
+
+        $page = ($_GET['page']!='')? $_GET['page'] : 1;
+        $list = 10;
+        $block_ct=5;
+
+        $block_num = ceil($page/$block_ct); // 현재 페이지 블록 구하기
+        $block_start = (($block_num - 1) * $block_ct) + 1; // 블록의 시작번호
+        $block_end = $block_start + $block_ct - 1; //블록 마지막 번호
+
+        $total_page = ceil($row_num / $list); // 페이징한 페이지 수 구하기
+        if($block_end > $total_page) $block_end = $total_page; //만약 블록의 마지박 번호가 페이지수보다 많다면 마지박번호는 페이지 수
+        $total_block = ceil($total_page/$block_ct); //블럭 총 개수
+        $start_num = ($page-1) * $list; //시작번호 (page-1)에서 $list를 곱한다.
+
+        $paging = paging($block_start, $block_end, $block_num,$total_block, $page);
+
+        /* paging */
+
+        $stmt = $conn->prepare("SELECT b.number, b.title, c.name, b.reg_date FROM me_blog_board b LEFT OUTER JOIN me_blog_category c ON b.sub_category = c.number " . $WHERE . " order by b.number desc LIMIT $start_num, $list");
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        
+
+
+        if (sizeof($result) == 0) {
+            $content = ' <td colspan=4 class="text-center" scope="row">등록된 게시글이 없습니다.</td> ';
+
+        } else {
+            $count = $row_num - ($list * ($page - 1));
+            foreach ($result as $data) {
+                $hashtag = explode(",", $data['tag']);
+                $hash_tag = '';
+                if ($data['tag'] != '') {
+                    foreach ($hashtag as $tag) {
+                        $hash_tag .= ' <span>#' . $tag . '</span>';
+                    }
+                }
+
+                $content .= '
+                <tr class="table-active cursor_pointer"  onclick="location.href=\'?mode=show&number=' . $data['number'] . '\'">
+                    <td class="text-center" scope="row">' . $count-- . '</td>
+                    <td class="text-center">' . $data['title'] . '</td>
+                    <td class="text-center">' . $data['name'] . '</td>
+                    <td class="text-center">' . $data['reg_date'] . '</td>
+                  </tr>
+                ';
+            }
+        }
+
+        $RETURN = '
+            <table class="table table-hover">
+            <thead >
+                <tr style="background-color: #666; ">
+                  <th style="color:white;" class="text-center" scope="col" width="30">no</th>
+                  <th style="color:white;" class="text-center" scope="col" width="200">title</th>
+                  <th style="color:white;" class="text-center" scope="col" width="100">category</th>
+                  <th style="color:white;" class="text-center" scope="col" width="100">date</th>
+                </tr>
+              </thead>
+            <tbody>
+            ' . $content . '
+            </tbody>
+        </table>
+            ';
+    }
+    return $RETURN;
+
 }
 function paging($block_start, $block_end,$block_num, $total_block,$page){
     $RETURN = '<ul class="pagination">';
@@ -101,257 +226,18 @@ function paging($block_start, $block_end,$block_num, $total_block,$page){
     // }
     return $RETURN;
 }
-function study_list($html)
-{
-    global $conn,$paging;
-    if ($html == "index") {
 
-        $stmt = $conn->prepare("SELECT b.number, b.title, c.name, b.reg_date FROM me_blog_board b  LEFT OUTER JOIN  me_blog_category c ON b.sub_category = c.number WHERE category = 2 order by b.reg_date desc LIMIT 0,5");
-        $stmt->execute();
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        if (sizeof($result) == 0) {
-            $content = ' <td colspan=4 class="text-center" scope="row">등록된 게시글이 없습니다.</td> ';
-
-        } else {
-            foreach ($result as $data) {
-                $hashtag = explode(",", $data['tag']);
-                $hash_tag = '';
-                if ($data['tag'] != '') {
-                    foreach ($hashtag as $tag) {
-                        $hash_tag .= ' <span>#' . $tag . '</span>';
-                    }
-                }
-
-                $content .= '
-                <tr  class="table-active cursor_pointer"  onclick="location.href=\'board.php?mode=show&number=' . $data['number'] . '\'">
-                    <td class="text-center">' . $data['number'] . '</td>
-                    <td class="text-center">' . $data['title'] . '</td>
-                    <td class="text-center">' . $data['name'] . '</td>
-                  </tr>
-                ';
-            }
-        }
-
-        $RETURN = '
-            <table class="table table-hover">
-            <tbody>
-            ' . $content . '
-            </tbody>
-        </table>
-            ';
-
-    } else {
-
-        $sub_category = $_GET['sub_category'];
-        $field = $_GET['field'];
-        $keyword = $_GET['search_keyword'];
-        $WHERE = "WHERE category = 2 ";
-        $WHERE = ($sub_category != '') ? $WHERE .= " AND sub_category = " . $sub_category : $WHERE;
-        $WHERE = ($field != '') ? $WHERE .= " AND " . $field . "  LIKE '%$keyword%'" : $WHERE;
-
-
-        /* paging */
-        $sql1 =  $conn->prepare("SELECT number FROM me_blog_board " . $WHERE . " order by number desc");
-        $sql1->execute();
-        $row_num = $sql1->rowCount();
-
-        $page = ($_GET['page']!='')? $_GET['page'] : 1;
-        $list = 10;
-        $block_ct=5;
-
-        $block_num = ceil($page/$block_ct); // 현재 페이지 블록 구하기
-        $block_start = (($block_num - 1) * $block_ct) + 1; // 블록의 시작번호
-        $block_end = $block_start + $block_ct - 1; //블록 마지막 번호
-
-        $total_page = ceil($row_num / $list); // 페이징한 페이지 수 구하기
-        if($block_end > $total_page) $block_end = $total_page; //만약 블록의 마지박 번호가 페이지수보다 많다면 마지박번호는 페이지 수
-        $total_block = ceil($total_page/$block_ct); //블럭 총 개수
-        $start_num = ($page-1) * $list; //시작번호 (page-1)에서 $list를 곱한다.
-
-        $paging = paging($block_start, $block_end, $block_num,$total_block, $page);
-
-        /* paging */
-
-        $stmt = $conn->prepare("SELECT b.number, b.title, c.name, b.reg_date FROM me_blog_board b LEFT OUTER JOIN me_blog_category c ON b.sub_category = c.number " . $WHERE . " order by b.number desc LIMIT $start_num, $list");
-        $stmt->execute();
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        
-
-
-        if (sizeof($result) == 0) {
-            $content = ' <td colspan=4 class="text-center" scope="row">등록된 게시글이 없습니다.</td> ';
-
-        } else {
-            foreach ($result as $data) {
-                $hashtag = explode(",", $data['tag']);
-                $hash_tag = '';
-                if ($data['tag'] != '') {
-                    foreach ($hashtag as $tag) {
-                        $hash_tag .= ' <span>#' . $tag . '</span>';
-                    }
-                }
-
-                $content .= '
-                <tr class="table-active cursor_pointer"  onclick="location.href=\'?mode=show&number=' . $data['number'] . '\'">
-                    <td class="text-center" scope="row">' . $data['number'] . '</td>
-                    <td class="text-center">' . $data['title'] . '</td>
-                    <td class="text-center">' . $data['name'] . '</td>
-                    <td class="text-center">' . $data['reg_date'] . '</td>
-                  </tr>
-                ';
-            }
-        }
-
-        $RETURN = '
-            <table class="table table-hover">
-            <thead >
-                <tr style="background-color: #666; ">
-                  <th style="color:white;" class="text-center" scope="col" width="30">no</th>
-                  <th style="color:white;" class="text-center" scope="col" width="200">title</th>
-                  <th style="color:white;" class="text-center" scope="col" width="100">category</th>
-                  <th style="color:white;" class="text-center" scope="col" width="100">date</th>
-                </tr>
-              </thead>
-            <tbody>
-            ' . $content . '
-            </tbody>
-        </table>
-            ';
-    }
-    return $RETURN;
-}
-
-function algorithm_list($html)
-{
-    global $conn,$paging;
-
-    if ($html == "index") {
-        $stmt = $conn->prepare("SELECT b.number, b.title, c.name, b.reg_date FROM me_blog_board b  LEFT OUTER JOIN me_blog_category c ON b.sub_category = c.number WHERE category = 3 order by b.reg_date desc LIMIT 0,5");
-        $stmt->execute();
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        if (sizeof($result) == 0) {
-            $content = ' <td colspan=4 class="text-center" scope="row">등록된 게시글이 없습니다.</td> ';
-
-        } else {
-            foreach ($result as $data) {
-                $hashtag = explode(",", $data['tag']);
-                $hash_tag = '';
-                if ($data['tag'] != '') {
-                    foreach ($hashtag as $tag) {
-                        $hash_tag .= ' <span>#' . $tag . '</span>';
-                    }
-                }
-
-                $content .= '
-                <tr  class="table-active cursor_pointer"  onclick="location.href=\'board.php?mode=show&number=' . $data['number'] . '\'">
-                    <td class="text-center">' . $data['number'] . '</td>
-                    <td class="text-center">' . $data['title'] . '</td>
-                    <td class="text-center">' . $data['name'] . '</td>
-                  </tr>
-                ';
-            }
-        }
-
-        $RETURN = '
-            <table class="table table-hover">
-            <tbody>
-            ' . $content . '
-            </tbody>
-        </table>
-            ';
-    } else {
-
-        $sub_category = $_GET['sub_category'];
-        $field = $_GET['field'];
-        $keyword = $_GET['search_keyword'];
-        $WHERE = "WHERE category = 3 ";
-        $WHERE = ($sub_category != '') ? $WHERE .= " AND sub_category = " . $sub_category : $WHERE;
-        $WHERE = ($field != '') ? $WHERE .= " AND " . $field . "  LIKE '%$keyword%'" : $WHERE;
-
-        /* paging */
-        $sql1 =  $conn->prepare("SELECT number FROM me_blog_board " . $WHERE . " order by number desc"); //전체
-        $sql1->execute();
-        $row_num = $sql1->rowCount();
-
-        $page = ($_GET['page']!='')? $_GET['page'] : 1;
-        $list = 10;
-        $block_ct=5;
-
-        $block_num = ceil($page/$block_ct); // 현재 페이지 블록 구하기
-        $block_start = (($block_num - 1) * $block_ct) + 1; // 블록의 시작번호
-        $block_end = $block_start + $block_ct - 1; //블록 마지막 번호
-
-        $total_page = ceil($row_num / $list); // 페이징한 페이지 수 구하기
-        if($block_end > $total_page) $block_end = $total_page; //만약 블록의 마지박 번호가 페이지수보다 많다면 마지박번호는 페이지 수
-        $total_block = ceil($total_page/$block_ct); //블럭 총 개수
-        $start_num = ($page-1) * $list; //시작번호 (page-1)에서 $list를 곱한다.
-
-        $paging = paging($block_start, $block_end, $block_num,$total_block, $page);
-
-        /* paging */
-
-
-        $stmt = $conn->prepare("SELECT b.number, b.title, c.name, b.reg_date FROM me_blog_board b  LEFT OUTER JOIN  me_blog_category c ON b.sub_category = c.number " . $WHERE . " order by b.number desc LIMIT $start_num, $list");
-        $stmt->execute();
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        if (sizeof($result) == 0) {
-            $content = ' <td colspan=4 class="text-center" scope="row">등록된 게시글이 없습니다.</td> ';
-
-        } else {
-            foreach ($result as $data) {
-                $hashtag = explode(",", $data['tag']);
-                $hash_tag = '';
-                if ($data['tag'] != '') {
-                    foreach ($hashtag as $tag) {
-                        $hash_tag .= ' <span>#' . $tag . '</span>';
-                    }
-                }
-
-                $content .= '
-                <tr  class="table-active cursor_pointer"   onclick="location.href=\'?mode=show&number=' . $data['number'] . '\'">
-                    <td class="text-center" scope="row">' . $data['number'] . '</td>
-                    <td class="text-center">' . $data['title'] . '</td>
-                    <td class="text-center">' . $data['name'] . '</td>
-                    <td class="text-center">' . $data['reg_date'] . '</td>
-                  </tr>
-                ';
-            }
-        }
-
-        $RETURN = '
-            <table class="table table-hover">
-            <thead >
-                <tr style="background-color: #666; ">
-                  <th style="color:white;" class="text-center" scope="col" width="30">no</th>
-                  <th style="color:white;" class="text-center" scope="col" width="200">title</th>
-                  <th style="color:white;" class="text-center" scope="col" width="100">category</th>
-                  <th style="color:white;" class="text-center" scope="col" width="100">date</th>
-                </tr>
-              </thead>
-            <tbody>
-            ' . $content . '
-            </tbody>
-        </table>
-            ';
-    }
-
-    return $RETURN;
-}
 function guest_list()
 {
     global $conn;
-    $stmt = $conn->prepare("SELECT * FROM me_blog_guest order by reg_date");
+    $stmt = $conn->prepare("SELECT * FROM me_blog_guest order by reg_date desc");
     $stmt->execute();
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
     foreach ($result as $data) {
-        $mod_btn = '<a class="btn small_btn" onclick="check_password(' . $data['number'] . ',\'mod\')">수정</a>';
-        $del_btn = ' <a class="btn small_btn" onclick="check_password(' . $data['number'] . ',\'del\')">삭제</a>';
-        $mod_reg_btn = ' <a onclick="document.mod_form_' . $data['number'] . '.submit()" class="btn small_btn">수정</a>';
-        $cancel_btn = ' <a onclick="open_comments_tab(' . $data['number'] . ')" class="btn small_btn">취소</a>';
+        $mod_btn = '<button type="button" class="btn btn-primary small_btn" onclick="check_password(' . $data['number'] . ',\'mod\')"><i class="fa fa-pencil" aria-hidden="true"></i></button>';
+        $del_btn = ' <button type="button" class="btn btn-primary small_btn" onclick="check_password(' . $data['number'] . ',\'del\')"><i class="fa fa-trash" aria-hidden="true"></i></button>';
+        $mod_reg_btn = ' <button onclick="document.mod_form_' . $data['number'] . '.submit()" type="button" class="btn btn-primary small_btn">수정</button>';
+        $cancel_btn = ' <button onclick="open_comments_tab(' . $data['number'] . ')" type="button" class="btn btn-primary small_btn">취소</button>';
 
         $comments .= '
         <div id="comments_tab_' . $data['number'] . '" class="card  mb-3 pl-0 col-sm-12">
@@ -443,12 +329,12 @@ function comments_list($number)
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     foreach ($result as $data) {
-        $mod_btn = '<a class="btn small_btn" onclick="check_password(' . $data['number'] . ',\'mod\')">수정</a>';
-        $del_btn = ' <a class="btn small_btn" onclick="check_password(' . $data['number'] . ',\'del\')">삭제</a>';
-        $reply_btn = '<a class="btn small_btn" onclick="open_reply_tab(' . $data['number'] . ')">답글</a>';
-        $reply_reg_btn = '<a class="btn small_btn" onclick="document.reply_form_' . $data['number'] . '.submit()">등록</a>';
-        $mod_reg_btn = ' <a onclick="document.mod_form_' . $data['number'] . '.submit()" class="btn small_btn">수정</a>';
-        $cancel_btn = ' <a onclick="open_comments_tab(' . $data['number'] . ')" class="btn small_btn">취소</a>';
+        $mod_btn = ' <button type="button" class="btn btn-primary small_btn" onclick="check_password(' . $data['number'] . ',\'mod\')"><i class="fa fa-pencil" aria-hidden="true"></i></button>';
+        $del_btn = ' <button type="button" class="btn btn-primary small_btn" onclick="check_password(' . $data['number'] . ',\'del\')"><i class="fa fa-trash" aria-hidden="true"></i></button>';
+        $reply_btn = ' <button type="button" class="btn btn-primary small_btn" onclick="open_reply_tab(' . $data['number'] . ')"><i class="fa fa-reply" aria-hidden="true"></i></button>';
+        $reply_reg_btn = ' <button type="button" class="btn btn-primary small_btn" onclick="document.reply_form_' . $data['number'] . '.submit()">등록</button>';
+        $mod_reg_btn = ' <button onclick="document.mod_form_' . $data['number'] . '.submit()" type="button" class="btn btn-primary small_btn">수정</button>';
+        $cancel_btn = ' <button onclick="open_comments_tab(' . $data['number'] . ')"type="button" class="btn btn-primary small_btn">취소</button>';
 
         if ($data['parent'] == 0) { //최상위 댓글이면
 
@@ -658,7 +544,6 @@ function get_category($parent, $number)
 
     $RETURN = '
     <select name="' . $category . '" class="custom-select ">
-    <option value="">all category</option>
     ';
 
     $stmt = $conn->prepare("SELECT * FROM me_blog_category WHERE parent = :parent");
@@ -684,5 +569,4 @@ function gomsg($msg, $url)
 function msg($msg)
 {
     echo "<script>alert('" . $msg . "')</script>";
-    exit;
 }

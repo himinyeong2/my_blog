@@ -3,53 +3,137 @@
 <html>
 
 <head>
-	<title>Mintfolio</title>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
-	<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
-	<link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css" />
-	<link rel="stylesheet" href="assets/css/main.css?ver=1" />
-	<link rel="stylesheet" href="assets/css/minyeong.css?ver=3" />
+  <title>Mintfolio</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- css -->
+  <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/minyeong.css" />
 
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-	<script src="assets/bootstrap/js/bootstrap.js"></script>
-	<script src="assets/tinymce/tinymce.js"></script>
-	<!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> -->
+  <!-- js -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="assets/bootstrap/js/bootstrap.js"></script>
 
-	<!-- <script src="https://cdn.tiny.cloud/1/itsk2bpwv1pnz1w7w8yhkukvw46viduivh5qnbopgsfr8yi4/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script> -->
-		
+  <!-- summernote -->
+  <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
+
 </head>
 
+<style>
+
+</style>
+
 <body>
-
-	<nav id="header" class="navbar navbar-expand-lg navbar-light bg-light">
-		<div class="collapse navbar-collapse" id="navbarColor03">
-		  <ul class="navbar-nav mr-auto">
-			<li class="nav-item active">
-			  <a class="nav-link" href="/blog">HOME
-				<span class="sr-only">(current)</span>
-			  </a>
-			</li>
-			<li class="nav-item">
-			  <a class="nav-link" href="./board.php?mode=list&category_number=1">PROJECT</a>
-			</li>
-			<li class="nav-item">
-			  <a class="nav-link" href="./board.php?mode=list&category_number=3">ALGORITHM</a>
-			</li>
-			<li class="nav-item">
-			  <a class="nav-link" href="./board.php?mode=list&category_number=2">STUDY</a>
-			</li>
-			<li class="nav-item">
-				<a class="nav-link" href="./guest.php">GUEST</a>
-			</li>
-			<li style="position:absolute; right:15px; top:5px;" class="nav-item">
-				<a class="nav-link" onclick="board_add()" >go to write</a>
-			</li>
-		  </ul>
-		</div>
-	  </nav>
-	  <script>
-
-	  </script>
+  <div class="page-wrapper chiller-theme toggled">
+    <a id="show-sidebar" class="btn btn-sm btn-dark" href="#" style="z-index: 999;">
+      <i class="fa fa-bars" aria-hidden="true"></i>
+    </a>
+    <nav id="sidebar" class="sidebar-wrapper">
+      <div class="sidebar-content">
+        <div class="sidebar-brand">
+          <a href="/blog">MINTFOLIO</a>
+          <div id="close-sidebar">
+            <i class="fa fa-times" aria-hidden="true"></i>
+          </div>
+        </div>
+        <div class="sidebar-header">
+          <div class="user-pic">
+            <img class="img-responsive img-rounded" src="assets/image/me.jpg" alt="User picture">
+          </div>
+          <div class="user-info">
+            <span class="user-name">LEE MINYEONG
+            </span>
+            <span class="user-role">Administrator</span>
+            <span onclick="location.href='../me'" class=" cursor_pointer user-status">
+              About Me
+            </span>
+          </div>
+        </div>
+        <!-- sidebar-header  -->
+        <div class="sidebar-search">
+          <div>
+            <div class="input-group">
+              <input type="text" class="form-control search-menu" placeholder="Search...">
+              <div class="input-group-append">
+                <span class="input-group-text">
+                  <i class="fa fa-search" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- sidebar-search  -->
+        <div class="sidebar-menu">
+          <ul>
+            <!-- <li class="header-menu">
+              <span>Main</span>
+            </li> -->
+            <li class="sidebar">
+              <a href="board.php?mode=list&category_number=1">
+                <span>Project</span>
+              </a>
+            </li>
+            <li class="sidebar-dropdown">
+              <a href="#">
+                <span>Algorithm</span>
+              </a>
+              <div class="sidebar-submenu">
+                <ul>
+                  <li>
+                    <a href="board.php?mode=list&category_number=3">All</a>
+                  </li>
+                  <li>
+                    <a href="board.php?mode=list&category_number=3&sub_category=7">PROGRAMMERS</a>
+                  </li>
+                  <li>
+                    <a href="board.php?mode=list&category_number=3&sub_category=6">BACKJOON</a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li class="sidebar-dropdown">
+              <a href="#">
+                <span>Study</span>
+              </a>
+              <div class="sidebar-submenu">
+                <ul>
+                  <li>
+                    <a href="board.php?mode=list&category_number=2">All</a>
+                  </li>
+                  <li>
+                    <a href="board.php?mode=list&category_number=2&sub_category=5">Algorithm</a>
+                  </li>
+                  <li>
+                    <a href="board.php?mode=list&category_number=2&sub_category=4">Database</a>
+                  </li>
+                  <li>
+                    <a href="board.php?mode=list&category_number=2&sub_category=8">Web</a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li class="sidebar">
+              <a href="board.php?mode=list&category_number=9">
+                <span>Free Board</span>
+              </a>
+            </li>
+            <!-- <li class="header-menu">
+              <span>Extra</span>
+            </li> -->
+            <li>
+              <a href="guest.php">
+                <span>Guest</span>
+              </a>
+            </li>
+            <li style="" class="header-menu cursor_pointer">
+              <span onclick="board_add()">Go to write</span>
+            </li>
+          </ul>
+        </div>
+        <!-- sidebar-menu  -->
+      </div>
+    </nav>
+    <main class="page-content" style="padding-top:0px!important">

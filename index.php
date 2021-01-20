@@ -8,8 +8,8 @@
     if($mode==''){
         
         $projects=project_list("index");
-        $studies=study_list("index");
-        $algorithms = algorithm_list("index");
+        $studies=board_list("index",2);
+        $algorithms = board_list("index",3);
 
         include_once 'html/blog_index.html';
     }

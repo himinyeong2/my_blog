@@ -14,7 +14,8 @@ if($mode="show_contents" && $number!=''){
 
     $contents = $result[0]['contents'];
 
-    echo $contents;
+    echo '
+    <link rel="stylesheet" href="assets/css/minyeong.css" />'.$contents;
 
 }
 ?>

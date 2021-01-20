@@ -1,20 +1,22 @@
 
-<div class="container" >
-    <div class="row">
-        <div align="left" class="col-sm-12 mb-4">
-            <h3>PROJECT &nbsp; <span class="plus_btn" onclick="location.href='./board.php?mode=list&category_number=1'"> + </span></h3>
+
+
+        <div class="container" >
             <div class="row">
-            <?php echo $projects ?>
+                <div align="left" class="col-sm-12 mb-4">
+                    <h3>PROJECT &nbsp; <span class="plus_btn" onclick="location.href='./board.php?mode=list&category_number=1'"> + </span></h3>
+                    <div class="row" style="min-height: 350px;">
+                    <?php echo $projects ?>
+                    </div>
+                </div>
+                <div align="left" class="col-sm-6">
+                    <h3>STUDY&nbsp; <span class="plus_btn" onclick="location.href='./board.php?mode=list&category_number=2'"> + </span></h3>
+                    <?php echo $studies ?>
+                </div>
+        
+                <div align="left"  class="col-sm-6">
+                    <h3>ALGORITHM&nbsp; <span class="plus_btn" onclick="location.href='./board.php?mode=list&category_number=3'"> + </span></h3>
+                    <?php echo $algorithms ?>
+                </div>
             </div>
         </div>
-        <div align="left" class="col-sm-6">
-            <h3>STUDY&nbsp; <span class="plus_btn" onclick="location.href='./board.php?mode=list&category_number=3'"> + </span></h3>
-            <?php echo $studies ?>
-        </div>
-
-        <div align="left"  class="col-sm-6">
-            <h3>ALGORITHM&nbsp; <span class="plus_btn" onclick="location.href='./board.php?mode=list&category_number=2'"> + </span></h3>
-            <?php echo $algorithms ?>
-        </div>
-    </div>
-</div>
