@@ -14,7 +14,7 @@
   <!-- js -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-  <script src="assets/bootstrap/js/bootstrap.js"></script>
+  <script src="assets/bootstrap/js/bootstrap.min.js"></script>
 
   <!-- summernote -->
   <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
@@ -34,19 +34,19 @@
     <nav id="sidebar" class="sidebar-wrapper">
       <div class="sidebar-content">
         <div class="sidebar-brand">
-          <a href="/blog">MINTFOLIO</a>
+          <a style="font-size:20px;" href="/blog">MINTFOLIO</a>
           <div id="close-sidebar">
             <i class="fa fa-times" aria-hidden="true"></i>
           </div>
         </div>
         <div class="sidebar-header">
           <div class="user-pic">
-            <img class="img-responsive img-rounded" src="assets/image/me.jpg" alt="User picture">
+            <img class="img-responsive img-rounded" src="<?php echo get_object('me_blog_config', 'number',1,'img')  ?>" alt="User picture">
           </div>
           <div class="user-info">
-            <span class="user-name">LEE MINYEONG
+            <span class="user-name"><?php echo get_object('me_blog_config', 'number',1,'name') ?>
             </span>
-            <span class="user-role">Administrator</span>
+            <span onclick="location.href='admin/index.php'" class="user-role cursor_pointer">Administrator</span>
             <span onclick="location.href='../me'" class=" cursor_pointer user-status">
               About Me
             </span>
@@ -68,69 +68,7 @@
         <!-- sidebar-search  -->
         <div class="sidebar-menu">
           <ul>
-            <!-- <li class="header-menu">
-              <span>Main</span>
-            </li> -->
-            <li class="sidebar">
-              <a href="board.php?mode=list&category_number=1">
-                <span>Project</span>
-              </a>
-            </li>
-            <li class="sidebar-dropdown">
-              <a href="#">
-                <span>Algorithm</span>
-              </a>
-              <div class="sidebar-submenu">
-                <ul>
-                  <li>
-                    <a href="board.php?mode=list&category_number=3">All</a>
-                  </li>
-                  <li>
-                    <a href="board.php?mode=list&category_number=3&sub_category=7">PROGRAMMERS</a>
-                  </li>
-                  <li>
-                    <a href="board.php?mode=list&category_number=3&sub_category=6">BACKJOON</a>
-                  </li>
-                </ul>
-              </div>
-            </li>
-            <li class="sidebar-dropdown">
-              <a href="#">
-                <span>Study</span>
-              </a>
-              <div class="sidebar-submenu">
-                <ul>
-                  <li>
-                    <a href="board.php?mode=list&category_number=2">All</a>
-                  </li>
-                  <li>
-                    <a href="board.php?mode=list&category_number=2&sub_category=5">Algorithm</a>
-                  </li>
-                  <li>
-                    <a href="board.php?mode=list&category_number=2&sub_category=4">Database</a>
-                  </li>
-                  <li>
-                    <a href="board.php?mode=list&category_number=2&sub_category=8">Web</a>
-                  </li>
-                </ul>
-              </div>
-            </li>
-            <li class="sidebar">
-              <a href="board.php?mode=list&category_number=9">
-                <span>Free Board</span>
-              </a>
-            </li>
-            <!-- <li class="header-menu">
-              <span>Extra</span>
-            </li> -->
-            <li>
-              <a href="guest.php">
-                <span>Guest</span>
-              </a>
-            </li>
-            <li style="" class="header-menu cursor_pointer">
-              <span onclick="board_add()">Go to write</span>
-            </li>
+            <?php echo menu_list() ?>
           </ul>
         </div>
         <!-- sidebar-menu  -->

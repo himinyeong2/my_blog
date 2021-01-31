@@ -1,6 +1,50 @@
 <?php
 include_once 'db/dbcon.php';
 
+function menu_list(){
+    global $conn;
+
+    $stmt = $conn->prepare("SELECT * FROM me_blog_menu WHERE parent=0 ORDER BY sort");
+    $stmt->execute();
+    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach($result as $data){
+
+        $sub_stmt = $conn->prepare("SELECT * FROM me_blog_menu WHERE parent=$data[number] ORDER BY sort");
+        $sub_stmt->execute();
+        $sub_result = $sub_stmt->fetchAll(PDO::FETCH_ASSOC);
+        $sub_cnt = $sub_stmt->rowCount();
+        $class="sidebar";
+        $sub_return = '';
+        $sub = '';
+        if($sub_cnt>0){
+            $class="sidebar-dropdown";
+            foreach($sub_result as $data2){
+                $sub .= '
+                <li>
+                        <a href="'.$data2['link'].'">'.$data2['name'].'</a>
+                      </li>
+                ';
+            }
+            $sub_return = '<div class="sidebar-submenu">
+            <ul>'.$sub.'</ul></div>';
+            
+        }
+        $return .= '
+        <li id="parent_'.$data['number'].'" class="'.$class.'">
+              <a href="'.$data['link'].'">
+                <span>'.$data['name'].'</span>
+              </a>
+              '.$sub_return.'
+            </li>
+        '
+        ;
+    }
+
+
+
+    return $return;
+}
 
 function project_list($html)
 {
@@ -9,7 +53,7 @@ function project_list($html)
 
     $field = $_GET['field'];
     $keyword = $_GET['search_keyword'];
-    $WHERE = "WHERE category =1  ";
+    $WHERE = "WHERE category =1  and display='Y' ";
     $WHERE = ($field != '') ? $WHERE .= " AND " . $field . "  LIKE '%$keyword%'" : $WHERE;
     
 
@@ -64,11 +108,20 @@ function project_list($html)
         ';
     return $RETURN;
 }
+function get_object($table, $field, $value,$find){
+    global $conn;
+    $stmt = $conn->prepare("SELECT $find FROM $table WHERE $field = $value");
+    $stmt->execute();
+    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    return $result[0][$find];
+
+}
 function board_list($html, $category){
     global $conn,$paging;
     if ($html == "index") {
 
-        $stmt = $conn->prepare("SELECT b.number, b.title, c.name, b.reg_date FROM me_blog_board b  LEFT OUTER JOIN  me_blog_category c ON b.sub_category = c.number WHERE category = $category order by b.reg_date desc LIMIT 0,5");
+        $stmt = $conn->prepare("SELECT b.number, b.title, c.name, b.reg_date FROM me_blog_board b  LEFT OUTER JOIN  me_blog_category c ON b.sub_category = c.number WHERE category = $category and display='Y' order by b.reg_date desc LIMIT 0,5");
         $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -109,7 +162,7 @@ function board_list($html, $category){
         $sub_category = $_GET['sub_category'];
         $field = $_GET['field'];
         $keyword = $_GET['search_keyword'];
-        $WHERE = "WHERE category = $category ";
+        $WHERE = "WHERE category = $category and display='Y'";
         $WHERE = ($sub_category != '') ? $WHERE .= " AND sub_category = " . $sub_category : $WHERE;
         $WHERE = ($field != '') ? $WHERE .= " AND " . $field . "  LIKE '%$keyword%'" : $WHERE;
 
@@ -187,6 +240,7 @@ function board_list($html, $category){
     return $RETURN;
 
 }
+
 function paging($block_start, $block_end,$block_num, $total_block,$page){
     $RETURN = '<ul class="pagination">';
 
@@ -544,6 +598,7 @@ function get_category($parent, $number)
 
     $RETURN = '
     <select name="' . $category . '" class="custom-select ">
+	<option value=""></option>
     ';
 
     $stmt = $conn->prepare("SELECT * FROM me_blog_category WHERE parent = :parent");

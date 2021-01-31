@@ -1,5 +1,4 @@
 <?php
-include_once "html/header.html";
 include_once "category.php";
 include_once "lib/lib.php";
 
@@ -9,6 +8,8 @@ $sub_category = $_GET['sub_category'];
 $field = $_GET['field'];
 $number = $_GET['number'];
 
+include_once "html/header.html";
+
 if ($mode == "list") {
     
     $select_box = get_select_box(array("", "title","contents","tag"),array("all field","제목","내용","태그"),$field);
@@ -17,19 +18,12 @@ if ($mode == "list") {
         // $category_box = get_category(1,0);
         $board_list = project_list(null);
 
-    } else if ($category == "3") {
-        $title = "ALGORITHM";
-        $category_box = get_category(3,$sub_category);
-        $board_list = board_list(null,$category);
-
-    } else if ($category == "2") {
-        $title = "STUDY";
-        $category_box = get_category(2,$sub_category);
-        $board_list = board_list(null,$category);
-    } else if($category=="9"){
-        $title = "FREE BOARD";
-        $board_list = board_list(null,$category);
     }
+    else{
+        $title=get_object("me_blog_category", "number", $category, "name");
+        $category_box = get_category($category,$sub_category);
+        $board_list = board_list(null,$category);
+    } 
     include 'html/board_list.html';
 
 } else if ($mode == 'add') {
@@ -178,6 +172,10 @@ else if ($mode == "reg") {
 else if($mode == "show" && $number!=''){
 
     if($number!=''){
+    
+        $view_stmt = $conn->prepare("UPDATE me_blog_board SET view = view + 1 WHERE number = $number");
+        $view_stmt->execute();
+
         $stmt = $conn->prepare("SELECT b.number,b.contents, b.title, b.sub_title, b.tag, b.reg_date, c.value, b.main_image FROM me_blog_board b INNER JOIN me_blog_category c ON b.category = c.number WHERE b.number = :number");
         $stmt->bindParam(':number',$number);
         $stmt->execute();

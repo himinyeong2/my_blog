@@ -1,0 +1,42 @@
+<div id="layoutSidenav_content">
+    <main>
+        <div class="container-fluid">
+            <h1 class="mt-4">게시판 관리</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item active">Board Management</li>
+            </ol>
+            <div class="card mb-4">
+                <div class="card-body">
+                    이 페이지는 게시판의 정보를 관리하는 페이지 입니다.
+                    <?php echo $test ?>
+                </div>
+            </div>
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr align="center">
+                                    <th hidden></th>
+                                    <th width="10">No</th>
+                                    <th>Title</th>
+                                    <th>Category</th>
+                                    <th>Sub Category</th>
+                                    <th>View</th>
+                                    <th>Reg Date</th>
+                                    <th>Display</th>
+                                    <th>Tool</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php echo print_table(); ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="static/dist/js/scripts2.js"></script>

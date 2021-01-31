@@ -1,0 +1,130 @@
+<style>
+    .card_title {
+        border: 1px solid rgba(0, 0, 0, 0.125);
+        border-radius: 0.3rem;
+    }
+</style>
+<div id="layoutSidenav_content">
+    <main>
+        <div class="container-fluid">
+            <h1 class="mt-4">카테고리 관리</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item active">Category Management</li>
+            </ol>
+            <div class="card mb-4">
+                <div class="card-body">
+                    이 페이지는 카테고리를 관리하는 페이지 입니다.
+                </div>
+            </div>
+            <div class="row">
+                <div class="card mb-4 col-md-7 ml-3">
+                    <div class="card-body">
+                        <div align="right" class="mb-3"><a onclick="show_form('add', null)"
+                                class="btn btn-primary btn-sm">+add category</a></div>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr align="center">
+                                        <th hidden></th>
+                                        <th width="10"></th>
+                                        <th width="10">No</th>
+                                        <th width="50">Name</th>
+                                        <th width="50">Value</th>
+                                        <th width="50">Tool</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php echo print_category() ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div id="category_form" class="card mb-4 col-md-4 mx-auto" style="height: fit-content; display:none">
+                    <div class="card-body">
+                        <form name="category_form" action="?mode=add" method="POST">
+                            <input hidden type="text" name="mode">
+                            <input hidden type="text" name="number">
+                            <div class="form-group">
+                                <label class="control-label" for="readOnlyInput">Parent Number</label>
+                                <input class="form-control" id="readOnlyInput" type="text" value="" readonly=""
+                                    name="parent">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Category Name</label>
+                                <input type="text" class="form-control" id="exampleInputEmail1"
+                                    aria-describedby="emailHelp" placeholder="Enter Name" name="name">
+                                <small id="emailHelp" class="form-text text-muted">프론트에 보일 이름 입니다 (한글/숫자 가능).</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Category Value</label>
+                                <input type="text" class="form-control" id="exampleInputEmail1"
+                                    aria-describedby="emailHelp" placeholder="Enter Value" name="value">
+                                <small id="emailHelp" class="form-text text-muted">카테고리의 value값을 넣어주세요 (영어만 가능).</small>
+                            </div>
+                            <div align="right"><button type="submit" class="btn btn-primary">Submit</button></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        function show_form(mode, number) {
+
+            if (document.getElementById('category_form').style.display == "none") {
+                document.getElementById('category_form').style.display = "block";
+                if (mode == "add") {
+                    $('input[name=mode]').val("insert");
+
+                    if (number == null) {//신규 일떙~~
+                        $('input[name=parent]').val("0");
+                    }
+                    else {//하위카테고리에 추가할떙
+                        $.ajax({
+                            url: '?mode=get&number=' + number,
+                            success: function (data) {
+                                json_data = JSON.parse(data);
+                                $('input[name=parent]').val(json_data[0]['number']);
+                            }
+                        });
+                    }
+                } else if (mode == "mod") {
+                    $('input[name=mode]').val("update");
+                    $.ajax({
+                        url: '?mode=get&number=' + number,
+                        success: function (data) {
+                            json_data = JSON.parse(data);
+                            $('input[name=number]').val(json_data[0]['number']);
+                            $('input[name=parent]').val(json_data[0]['parent']);
+                            $('input[name=name]').val(json_data[0]['name']);
+                            $('input[name=value]').val(json_data[0]['value']);
+                        }
+                    });
+                }
+
+            }
+            else {
+                document.getElementById('category_form').style.display = "none";
+                $('input[name=parent]').val("");
+                $('input[name=name]').val("");
+                $('input[name=value]').val("");
+            }
+
+
+        }
+        function del_category(number) {
+            if(confirm("정말로 삭제하시겠습니까?\n삭제 시 하위 카테고리도 삭제 됩니다.")){
+                $.ajax({
+                url: '?mode=del&number=' + number,
+                success: function (data) {
+                    if(data=="SUCCESS"){
+                        alert("성공적으로 삭제되었습니다.");
+                        location.reload();
+                    }
+                }
+            });
+            }
+        }
+    </script>

@@ -1,0 +1,99 @@
+<div id="layoutSidenav_content">
+    <main>
+        <div class="container-fluid">
+            <h1 class="mt-4"><?php echo $page_name ?> Page</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item active"><?php echo $page_path ?></li>
+            </ol>
+            <div class="card mb-4">
+                <div class="card-body">
+                    이 페이지는 글을 추가 및 수정하는 페이지 입니다.
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <form action="board.php?mode=reg&number=<?php echo $number ?>" method="post" name="study_form"
+                        enctype="multipart/form-data">
+                        <input hidden type="text" name="number" value="<?php echo $number ?>">
+                        <div id="modal" class="modal">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div id="modal_body" class="modal-body">
+                                        <p>Select Category!</p>
+                                        <?php echo $category_box; ?>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" onclick="$('form[name=study_form]').submit()"
+                                            class="btn btn-primary btn-sm">Save</button>
+                                        <button type="button" id="close_btn" class="btn btn-secondary btn-sm"
+                                            data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card col-md-8 mb-3">
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">
+                                        <div class="form-group">
+                                            <fieldset>
+                                                <label class="control-label" for="readOnlyInput">제목</label>
+                                                <input class="form-control" name="title" id="readOnlyInput" type="text"
+                                                    placeholder="제목을 입력하세요" value="<?php echo $title ?>">
+                                            </fieldset>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <div class="form-group">
+                                            <fieldset>
+                                                <label class="control-label" for="readOnlyInput">짧은 설명</label>
+                                                <input class="form-control" name="sub_title" id="readOnlyInput"
+                                                    type="text" placeholder="짧은 설명을 입력하세요"
+                                                    value="<?php echo $sub_title ?>">
+                                            </fieldset>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <div class="form-group">
+                                            <label for="content">내용</label>
+                                            <textarea id="summernote" name="contents">
+                                        <?php echo $contents ?></textarea>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <div class="form-group">
+                                            <fieldset>
+                                                <label class="control-label" for="hashtag">해시태그</label>
+                                                <input  class="form-control" name="hashtag" type="text"
+                                                 placeholder="해시태그를 입력하세요"value="<?php echo $hashtag ?>">
+                                                 <small>콤마로 구분하여 입력해주세요 (ex. 정렬,정렬알고리즘,삽입정렬)</small>
+                                            </fieldset>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <div class="form-group">
+                                            <label for="content">메인이미지</label>
+                                            <fieldset>
+                                                <input type="file" name="main_image">
+                                            </fieldset>
+                                        </div>
+                                        <?php echo $main_image ?>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <div class="row">
+                                            <div align="center" class="col-md-12">
+                                                <button id="insert_btn" type="button" class="btn btn-primary full_btn"
+                                                    style="height: 45px;">INSERT</button>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+       

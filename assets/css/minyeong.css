@@ -562,9 +562,9 @@ p{
   }
   .white_tab {
     background-color: white;
-    border: 1px solid #E0E0E0;
+    /* border: 1px solid #E0E0E0; */
+   
 }
-
 .fluid {
     height: 100px;
     text-align: center;
@@ -622,10 +622,15 @@ p{
 }
 
 .contents_tab {
-    height: 800px;
+    min-height: 600px;
+          max-height:800px;
     overflow:scroll;
 
 }
+.contents_tab > p > img{
+	max-width:100%;
+}
+
 #comments_tab {
     display: none;
 }

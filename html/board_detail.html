@@ -1,6 +1,6 @@
 
 <div class="container-fluid info_tab px-0 ">
-    <div class="row col-sm-12 mx-auto  white_tab">
+    <div class="row col-sm-12 mx-auto  white_tab " >
         <div class="row col-sm-6 mx-auto pl-0 mt-5 mb-3">
             <div class="col-md-2   pl-0">
                 <div class="img_div"><img src="<?php echo $main_image ?>"></div>
@@ -30,7 +30,7 @@
         </div>
     </div>
 
-    <div class="row col-lg-12 mx-auto pl-0 white_tab">
+    <div class="row col-lg-12 mx-auto pl-0 white_tab" style="border:1px solid #E0E0E0">
         <div class="row col-sm-6 mx-auto pl-0 my-2">
             <div class="col-md-12 pl-0">
                 <ul class="nav_tab_2">
@@ -41,14 +41,14 @@
         </div>
     </div>
     <div id="contents_tab" class="row col-md-6 mx-auto my-3 pl-0 pr-0">
-        <div class="col-md-12 px-5 py-5 white_tab">
+        <div class="col-md-12 px-5 py-5 white_tab"  style="border:1px solid #E0E0E0">
             <div align="right" class="col-md-12" style="left:15px; bottom:15px;">
                 <button onclick="board_mod('<?php echo $number ?>')" type="button" class="btn btn-primary small_btn"><i class="fa fa-pencil" aria-hidden="true"></i></button>
                 <button onclick="board_del('<?php echo $number ?>')" type="button" class="btn btn-primary small_btn"><i class="fa fa-trash" aria-hidden="true"></i></button>
                 <!-- <a onclick="board_mod('<?php echo $number ?>')" class="btn small_btn">수정</a>
                 <a onclick="board_del('<?php echo $number ?>')" class="btn small_btn">삭제</a> -->
             </div>
-            <div class="contents_tab">
+            <div class="contents_tab" >
                 <?php echo $contents ?>
                 <!-- <iframe scrolling="auto" style="width:100%; overflow:auto; height:100%;"
                     src="board_contents.php?mode=show_contents&number=<?php echo $number ?>"></iframe> -->

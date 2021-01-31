@@ -1,0 +1,132 @@
+<style>
+    .card_title {
+        border: 1px solid rgba(0, 0, 0, 0.125);
+        border-radius: 0.3rem;
+    }
+</style>
+<div id="layoutSidenav_content">
+    <main>
+        <div class="container-fluid">
+            <h1 class="mt-4">메뉴 관리</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item active">Menu Management</li>
+            </ol>
+            <div class="card mb-4">
+                <div class="card-body">
+                    이 페이지는 프론트의 메뉴를 관리하는 페이지 입니다.
+                </div>
+            </div>
+            <div class="row">
+                <div class="card mb-4 col-md-7 ml-3" style="height:fit-content;">
+                    <div class="card-body">
+                        <div align="right" class="mb-3"><a onclick="show_form('add', null)"
+                                class="btn btn-primary btn-sm">+add menu</a></div>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr align="center">
+                                        <th hidden></th>
+                                        <th width="10">No</th>
+                                        <th width="100">Name</th>
+                                        <th width="50">Sort</th>
+                                        <th width="50">Tool</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php echo print_menu() ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div id="menu_form" class="card mb-4 col-md-4 mx-auto" style="height: fit-content; display:none">
+                    <div class="card-body">
+                        <form name="menu_form" action="?mode=add" method="POST">
+                            <input hidden type="text" name="mode">
+                            <input hidden type="text" name="number">
+                            <div class="form-group">
+                                <label class="control-label" for="parent_number">Parent Number</label>
+                                <input class="form-control" id="parent_number" type="text" value="" readonly="" name="parent">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Menu Name</label>
+                                <input type="text" class="form-control" id="name" placeholder="Enter name" name="name">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Sort</label>
+                                <input type="text" class="form-control" id="sort" placeholder="Enter sort" name="sort">
+                                <small class="form-text text-muted">메뉴의 정렬 순서를 올바르게 입력해주세요(오름차순 입력).</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Link</label>
+                                <input type="text" class="form-control" id="link" placeholder="Enter link" name="link">
+                            </div>
+                            <div align="right"><button type="submit" class="btn btn-primary">Submit</button></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        function show_form(mode, number) {
+
+            if (document.getElementById('menu_form').style.display == "none") {
+                document.getElementById('menu_form').style.display = "block";
+                if (mode == "add") {
+                    $('input[name=mode]').val("insert");
+
+                    if (number == null) {//신규 일떙~~
+                        $('input[name=parent]').val("0");
+                    }
+                    else {//하위카테고리에 추가할떙
+                        $.ajax({
+                            url: '?mode=get&number=' + number,
+                            success: function (data) {
+                                json_data = JSON.parse(data);
+                                $('input[name=parent]').val(json_data[0]['number']);
+                            }
+                        });
+                    }
+                } else if (mode == "mod") {
+                    $('input[name=mode]').val("update");
+                    $.ajax({
+                        url: '?mode=get&number=' + number,
+                        success: function (data) {
+                            json_data = JSON.parse(data);
+                            $('input[name=number]').val(json_data[0]['number']);
+                            $('input[name=parent]').val(json_data[0]['parent']);
+                            $('input[name=name]').val(json_data[0]['name']);
+                            $('input[name=link]').val(json_data[0]['link']);
+                            $('input[name=sort]').val(json_data[0]['sort']);
+                        }
+                    });
+                }
+
+            }
+            else {
+                document.getElementById('menu_form').style.display = "none";
+                $('input[name=parent]').val("");
+                $('input[name=name]').val("");
+                $('input[name=number]').val("");
+                $('input[name=link]').val("");
+                $('input[name=sort]').val("");
+            }
+
+
+        }
+        function del_menu(number) {
+            if(confirm("정말로 삭제하시겠습니까?\n삭제 시 하위 카테고리도 삭제 됩니다.")){
+                $.ajax({
+                url: '?mode=del&number=' + number,
+                success: function (data) {
+                    if(data=="SUCCESS"){
+                        alert("성공적으로 삭제되었습니다.");
+                        location.reload();
+                    }
+                }
+            });
+            }
+        }
+    </script>

@@ -1,0 +1,99 @@
+<div id="layoutSidenav_content">
+    <main>
+        <div class="container-fluid">
+            <h1 class="mt-4">댓글관리 관리</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item active">Comment Management</li>
+            </ol>
+            <div class="card mb-4">
+                <div class="card-body">
+                    이 페이지는 게시글의 댓글을 관리하는 페이지 입니다.
+                    <?php echo $test ?>
+                </div>
+            </div>
+            <div id="comments_table" class="card mb-4 ">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr align="center">
+                                    <th hidden></th>
+                                    <th width="10">No</th>
+                                    <th width="200">Board Info</th>
+                                    <th width="100">Name</th>
+                                    <th width="400">Contents</th>
+                                    <th width="150">Reg Date</th>
+                                    <th width="80">Tool</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php echo print_comments() ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="comments_form" class="card mb-4 col-md-6 mx-auto" style="height: fit-content; display:none; ">
+                <div class="card-body">
+                    <form name="comments_form" action="?mode=add" method="POST">
+                        <input hidden type="text" name="number">
+                        <div class="form-group">
+                            <label class="control-label" for="readOnlyInput">Title</label>
+                            <input class="form-control" id="readOnlyInput" type="text" value="" readonly="" name="title">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Name</label>
+                            <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Enter Name" name="name">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Password</label>
+                            <input type="password" class="form-control" placeholder="Enter password" name="password">
+                            <small class="form-text text-muted">비밀번호 변경을 원할 시, 입력하세요. 입력하지 않으면 비밀번호는 그대로 저장됩니다.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Comments</label>
+                            <textarea name="comments" class="form-control" placeholder="Enter Comments" style="height:100px;"></textarea>
+                        </div>
+                        <div align="right">
+                            <button type="submit" class="btn btn-danger">저장</button>
+                            <button onclick="location.reload()" type="button" class="btn btn-secondary">목록으로</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        function edit_comment(number){
+            $.ajax({
+                    url:'?mode=get&number='+number,
+                    success:function(data){
+                        var json_data = JSON.parse(data)[0];
+                        $('input[name=number]').val(json_data['number']);
+                        $('input[name=title]').val(json_data['title']);
+                        $('input[name=name]').val(json_data['name']);
+                        $('textarea[name=comments]').val(json_data['comments']);
+                        document.getElementById('comments_form').style.display="block";
+                        document.getElementById('comments_table').style.display="none";
+                    }
+            });
+        }
+        function del_comment(number){
+            if(confirm("정말 삭제하시겠습니까?\n삭제 시 하위 댓글도 삭제 됩니다.")){
+                $.ajax({
+                    url:'?mode=del&number='+number,
+                    success:function(data){
+                        if(data=="SUCCESS"){
+                            alert("성공적으로 삭제되었습니다!");
+                            location.reload();
+                        }
+                        else{
+                            alert(data);
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+    <script src="static/dist/js/scripts2.js"></script>

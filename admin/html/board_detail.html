@@ -1,0 +1,63 @@
+<div id="layoutSidenav_content">
+    <main>
+        <div class="col-sm-12">
+            <form action="" method="post" name="board_form" enctype="multipart/form-data">
+                <input hidden="" type="text" name="number" value="">
+                <div class="card border-light mb-3">
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <fieldset>
+                                        <label class="control-label" for="readOnlyInput">제목</label>
+                                        <input class="form-control" name="title" id="readOnlyInput" type="text"
+                                            placeholder="제목을 입력하세요" value="">
+                                    </fieldset>
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <fieldset>
+                                        <label class="control-label" for="readOnlyInput">짧은 설명</label>
+                                        <input class="form-control" name="sub_title" id="readOnlyInput" type="text"
+                                            placeholder="짧은 설명을 입력하세요" value="">
+                                    </fieldset>
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="content">내용</label>
+
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="content">해시태그</label>
+                                    <input class="form-control" name="tag" type="text" placeholder="문자만 입력해주세요"
+                                        style="width:200px; display: inline-block; vertical-align: middle;">
+                                    <button id="add_btn" class="btn btn-primary" type="button">add</button>
+                                    <span id="hashtag"></span>
+                                    <input name="hashtag" type="text" value="" hidden="">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="content">메인이미지</label>
+                                    <fieldset>
+                                        <input type="file" name="main_image">
+                                    </fieldset>
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <div align="center" class="col-md-12">
+                                        <button id="insert_btn" type="button" class="btn btn-primary full_btn"
+                                            style="height: 45px;">INSERT</button>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
